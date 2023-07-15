@@ -1,0 +1,292 @@
+\documentclass{beamer}
+\setbeamertemplate{navigation symbols}{}
+
+% TODO pick cool theme
+% \usetheme{Boadilla}
+
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage[utf8]{inputenc}
+
+\usepackage{csquotes}
+\usepackage{xcolor}
+
+\usepackage{graphicx}
+\graphicspath{ {./img/} }
+
+\newcommand{\bul}{\hspace{-2.8pt}$\textcolor{blue}{\bullet}$ \hspace{5pt}}
+\newcommand{\cmd}[1]{\textcolor{blue}{\texttt{#1}}}
+
+\title{Vim}
+\author{Darius Schefer}
+\date{\today}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+  \begin{figure}
+    \includegraphics[width=0.8\textwidth]{how_to_quit_vim}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Geschichtsstunde}
+  \begin{itemize}
+    \item 1963: \texttt{ed} (Ken Thompson, Dennis Ritchie) \\
+      Ein Krampf \\[0.4cm]
+      %
+    \item 1976: \texttt{ex} und \texttt{vi} (Bill Joy) \\
+      Line Editor und Vollbild-Modus \\[0.4cm]
+      %
+    \item Danach: \texttt{Elvis}, \texttt{nvi}, \texttt{Stevie} ... \\
+      Diverse Klone \\[0.4cm]
+      %
+    \item 1991: \texttt{vim} (Bram Moolenaar) \\
+      \texttt{Vi IMproved}: Plugins, Unicode, Syntax Highlighting, ...  \\[0.4cm]
+      %
+    \item 2015: Neovim (Internet) \\
+      LSP, Lua, async I/O, ... \\
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Modales Editing}
+  Verschiedene \enquote{Modi} \\
+  Anfangs verwirrend, wünscht man sich später überall \\[0.3cm]
+
+  \begin{itemize}
+    \item Normal Mode \\
+      Standard Modus, Cursor und Text bewegen\\[0.3cm]
+      %
+    \item Insert Mode \\
+      Text eingeben \\[0.3cm]
+      %
+    \item Visual Mode \\
+      Text markieren \\[0.3cm]
+      %
+    \item Replace Mode \\
+      Text ersetzen \\[0.3cm]
+      %
+    \item Command Mode \\
+      Kommandos ausführen, Suchen
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Motions im Normal Mode}
+  \begin{tabular}{l | l}
+    \cmd{h,j,k,l} & links, runter, hoch, rechts \\[0.2cm]
+    \cmd{0, \$} & Anfang und Ende der Zeile (und \cmd{\^{}, g\_}) \\[0.2cm]
+    \cmd{w, e} & Wortanfang oder -ende vorwärts \\[0.2cm]
+    \cmd{b, ge} & Wortanfang oder -ende rückwärts \\[0.2cm]
+    \cmd{gg, G} & Erste/letzte Zeile der Datei \\[0.2cm]
+    \cmd{\%} & Zur passenden Klammer springen \\[0.2cm]
+    \cmd{42G} & Zeile 42 \\[0.2cm]
+    \cmd{f, F} & Vorwärts/rückwärts zu Buchstabe springen \\[0.2cm]
+    \cmd{t, T} & Vorwärts/rückwärts vor Buchstabe springen \\[0.2cm]
+    \cmd{;, ,} & Nächstes/vorheriges Match von f/F/t/T \\[0.2cm]
+    \cmd{/, ?} & Vorwärts/rückwärts suchen \\[0.2cm]
+    \cmd{n, N} & Nächstes/vorheriges Suchergebnis
+  \end{tabular}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Motions und Parameter}
+  Die meisten Kommandos nehmen eine Zahl als Parameter! \\[0.3cm]
+
+  \begin{itemize}
+    \item \cmd{5j} bewegt den Cursor 5 Zeilen nach unten \\[0.3cm]
+    \item \cmd{3w} bewegt den Cursor 3 Wörter vorwärts \\[0.3cm]
+    \item \cmd{2/wort} bewegt den Cursor zum 2. Vorkommen von \enquote{wort} ab dem Cursor \\[0.3cm]
+    \item \cmd{2\$} bewegt den Cursor zum Ende der nächsten Zeile \\[0.3cm]
+    \item und noch viele mehr
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Operatoren im Normal Mode}
+  Operatoren vor Motions führen eine Aktion auf der Region aus, über die der Cursor sich bewegt \\[0.5cm]
+
+  \begin{tabular}{l | l}
+    \cmd{d} & Löschen (bzw. ausschneiden) \\[0.2cm]
+    \cmd{c} & Löschen und neuen Text eingeben (Insert Mode) \\[0.2cm]
+    \cmd{y} & Kopieren (\cmd{p, P} fügt oberhalb/unterhalb ein) \\[0.2cm]
+    \cmd{=} & Einrücken \\[0.2cm]
+    \cmd{>} & Nach rechts bewegen \\[0.2cm]
+    \cmd{<} & Nach links bewegen
+  \end{tabular}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Jetzt wird's erst richtig lustig}
+  Kombinationen aus Operatoren und Motions nehmen natürlich auch Parameter! \\[0.3cm]
+
+  \begin{itemize}
+    \item \cmd{d3w} Löscht 3 Wörter \enquote{vorwärts} \\[0.3cm]
+    \item \cmd{y2/wort} Kopiert alles vom Cursor bis zum 2. Vorkommen von \enquote{wort} \\[0.3cm]
+    \item \cmd{dt\{} Löscht alles bis zur nächsten \enquote{\{} (auf der aktuellen Zeile) \\[0.5cm]
+  \end{itemize}
+
+  \enquote{Doppelte} Operatoren arbeiten auf der Aktuellen Zeile: \\
+  \cmd{dd} löscht die aktuelle Zeile, \cmd{yy} kopiert sie. \\[0.3cm]
+
+  Großbuchstabe heißt \enquote{bis Ende der Zeile}, \cmd{D} ist kürzer als \cmd{d\$}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Text Objects}
+  Vim kann Operationen \enquote{innerhalb von Objekten} und \enquote{um Objekte herum} ausführen  \\[0.5cm]
+
+  \begin{tabular}{l | l}
+    \cmd{iw} & Das aktuelle Wort \\[0.2cm]
+    \cmd{aw} & Das aktuelle Wort und alles bis zum nächsten \\[0.2cm]
+    \cmd{i(, i[, i\{} & Innerhalb der aktuellen Klammern \\[0.2cm]
+    \cmd{a(, a[, a\{} & Inklusive der aktuellen Klammern \\[0.2cm]
+    \cmd{ip, ap} & Aktueller Paragraph \\[0.2cm]
+    \cmd{i", i'} & Innerhalb der aktuellen Anführungszeichen \\[0.2cm]
+    \cmd{a", a'} & Inklusive der aktuellen Anführungszeichen
+  \end{tabular}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Insert Mode}
+  Viele Commands bringen euch in den Insert Mode, mit \cmd{<ESC>} geht's zurück zum Normal Mode \\[0.5cm]
+
+  \begin{tabular}{l | l}
+    \cmd{i} & Text links vom Cursor einfügen \\[0.2cm]
+    \cmd{a} & Text rechts vom Cursor einfügen \\[0.2cm]
+    \cmd{I} & Text vor erstem Zeichen der Zeile einfügen (\cmd \^{}i) \\[0.2cm]
+    \cmd{A} & Text nach letztem Zeichen der Zeile einfügen (\cmd \$a) \\[0.2cm]
+    \cmd{s} & Zeichen unter dem Cursor ersetzen (\cmd{xi}) \\[0.2cm]
+    \cmd{o, O} & Neue Zeile unter/über der aktuellen \\[0.2cm]
+  \end{tabular}
+
+  \vspace{0.5cm}
+
+  \cmd{3iabc} fügt \enquote{abcabcabc} ein nachdem ihr in den Normal Mode zurückkehrt
+\end{frame}
+
+\begin{frame}
+  \frametitle{Visual Mode}
+  Diese Tasten beginnen eine Text-Auswahl, auch die lässt sich mit \cmd{<ESC>} abbrechen \\[0.5cm]
+
+  \begin{tabular}{l | l}
+    \cmd{v} & Auswahl beginnen \\[0.2cm]
+    \cmd{V} & \enquote{Visual-line} Mode \\[0.2cm]
+    \cmd{<C-v>} & \enquote{Visual-block} Mode \\[0.2cm]
+    \cmd{o} & Zum anderen Ende der Auswahl springen \\[0.2cm]
+  \end{tabular}
+
+  \vspace{0.5cm}
+
+  Mit \cmd{gv} wählt ihr eure letzte Textauswahl nochmal aus
+
+\end{frame}
+
+  \begin{frame}
+    \frametitle{Text ersetzen}
+
+    \cmd{ra} im Normal Mode ersetzt das Zeichen unter dem Cursor mit \enquote{a} \\[0.3cm]
+  \cmd{ra} im Visual Mode die gesamte Auswahl!
+
+  \vspace{0.7cm}
+
+  Replace Mode ist keine extra Folie wert, drückt ihr im Normal Mode \cmd{R}, überschreibt ihr euren Text mit neuen Zeichen bis ihr wieder \cmd{<ESC>} drückt.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Oh no}
+  Im gegensatz zu \texttt{vi} gibt es im Jahr 1991 multi-level undo \\[0.5cm]
+  \begin{tabular}{l | l}
+    \cmd{u} & Letzte Bearbeitung rückgängig machen \\[0.2cm]
+    \cmd{<C-r>} & Das Rückgängigmachen rückgängig machen \\[0.2cm]
+    \cmd{U} & !?!? \\[0.2cm]
+  \end{tabular}
+
+  \vspace{0.5cm}
+
+  \cmd{U} laut Anleitung: \enquote{Undo all latest changes on one line, the line where the latest change was made.
+  \cmd{U} itself also counts as a change, and thus \cmd{U} undoes a previous \cmd{U}.} \\
+  Einfach nicht drücken, und wieder vergessen.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Commands und Command Mode}
+  \cmd{:} im Normal Mode bringt euch in den Command Mode und wartet auf einen Befehl: \\[0.5cm]
+
+  \begin{tabular}{l | l}
+    \cmd{:w} & Speichert die aktuelle Datei \\[0.2cm]
+    \cmd{:w a.txt} & \dots unter dem Namen \enquote{a.txt} \\[0.2cm]
+    \cmd{:q} & Schließt den Editor \\[0.2cm]
+    \cmd{:q!} & \dots bei ungespeicherten Veränderungen (\cmd{ZQ}) \\[0.2cm]
+    \cmd{:wq, :x} & Speichern und Schließen (\cmd{ZZ}) \\[0.2cm]
+    \cmd{:r a.txt} & Kopiert den Inhalt von a.txt hierher \\[0.2cm]
+    \cmd{:set <option>} & Setzt eine Einstellung
+  \end{tabular}
+
+  \vspace{0.5cm}
+
+  Habt ihr bereits Text im Visual Mode ausgewählt und drückt dann \cmd{:}, wird dies direkt zu \cmd{:'<,'>} erweitert. \\
+  Der Befehl (z.B. \cmd{:'<,'>w}) speichert dann nur eure Auswahl in einer Datei.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Suchen und ersetzen}
+  Der \cmd{:s} Befehl kann Text ersetzen \\[0.5cm]
+
+  \begin{tabular}{l | l}
+    \cmd{:s/a/b/} & Ersetzt das erste \enquote{a} der Zeile mit \enquote{b} \\[0.2cm]
+    \cmd{:s/a/b/g} & Ersetzt alle \enquote{a}, lies g als \enquote{global} \\[0.2cm]
+    \cmd{:\%s/a/b/} & Führt \cmd{:s/a/b/} auf jeder Zeile aus \\[0.2cm]
+    \cmd{:\%s/a/b/g} & Ersetzt alle \enquote{a} in der Datei durch \enquote{b} \\[0.2cm]
+    \cmd{:\%s/a/b/gc} & Fragt für alle \enquote{a} nach Bestätigung (\enquote{confirm}) \\[0.2cm]
+  \end{tabular}
+
+  \vspace{0.5cm}
+
+  \cmd{:s} kann sogar reguläre Ausdrücke!
+\end{frame}
+
+\begin{frame}
+  \frametitle{RTFM}
+  Vim kommt mit einer eingebauten Anleitung! \\[0.5cm]
+
+  \begin{tabular}{l | l}
+    \cmd{:h} & Öffnet die Anleitung \\[0.2cm]
+    \cmd{:h w} & Sagt euch was \cmd{w} macht \\[0.2cm]
+    \cmd{:h 'number'} & Sagt euch was \cmd{:set number} macht \\[0.2cm]
+    \cmd{:h :h} & Zeigt euch die Anleitung zur Anleitung
+  \end{tabular}
+
+  \vspace{0.5cm}
+
+  Die Anleitung zu lesen lohnt sich, vim kann so viel mehr als in einen Vortrag passt!
+\end{frame}
+
+\begin{frame}
+  \frametitle{Falls noch Zeit ist}
+  \begin{itemize}
+    \item Die \cmd{\$EDITOR} und {\$VISUAL} Umgebungsvariablen \\[0.2cm]
+    \item Neovim als \cmd{\$PAGED} und {\$MANPAGER} \\[0.2cm]
+    \item Die \cmd{.vimrc} \\[0.2cm]
+    \item Register und Makros \\[0.2cm]
+    \item Completion
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Hoffentlich ist noch Zeit für}
+  \begin{center}
+    \Huge Fragen?
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{\texttt{:wq}}
+  \begin{center}
+    \Huge Danke!
+  \end{center}
+\end{frame}
+
+\end{document}
